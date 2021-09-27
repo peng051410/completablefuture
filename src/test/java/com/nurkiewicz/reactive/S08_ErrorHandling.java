@@ -13,6 +13,7 @@ public class S08_ErrorHandling extends AbstractFuturesTest {
 
 	@Test
 	public void exceptionsShortCircuitFuture() throws Exception {
+		
 		final CompletableFuture<String> questions = questions("php");
 
 		questions.thenApply(r -> {

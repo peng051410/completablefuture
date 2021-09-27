@@ -22,6 +22,7 @@ public class S07_AsyncCallback extends AbstractFuturesTest {
 
 	@Test
 	public void whichThreadInvokesCallbacks() throws Exception {
+		
 		final CompletableFuture<String> java = CompletableFuture
 				.supplyAsync(
 						() -> client.mostRecentQuestionAbout("java"),
