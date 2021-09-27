@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,7 +44,7 @@ public class CompletableFutureTest {
 
 //        CompletableFuture<CompletableFuture<String>> future1 = CompletableFuture
 //                .supplyAsync(() -> 22).thenApply(this::getName);
-        
+
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> 22)
                 .thenCompose(this::getName);
 
@@ -113,6 +114,23 @@ public class CompletableFutureTest {
         CompletableFuture<Integer> future2 = future.thenCombine(future1, Integer::sum);
 
         assertEquals(44, (int) future2.get());
+    }
+
+    @Test
+    public void testCompletionException() throws ExecutionException, InterruptedException {
+
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            int result = 1 / 0;
+            return 22;
+        });
+
+        CompletableFuture<Integer> exceptionally = future.exceptionally((throwable -> {
+            assertTrue(throwable instanceof CompletionException);
+            assertTrue(throwable.getCause() instanceof ArithmeticException);
+            return 20;
+        }));
+        assertEquals(20, (int) exceptionally.get());
+
     }
 
     @Test
